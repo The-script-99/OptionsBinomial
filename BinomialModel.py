@@ -8,7 +8,7 @@ time = 2
 intrest = 0.25
 strike = 5
 
-
+#return value of an option with replicating portfolio 
 def getOptionValue(p,t,pUp,pDown,intrest,strike):
 
     outcomes = getOutcomes(t,pUp,pDown,p)
@@ -30,6 +30,7 @@ def getOptionValue(p,t,pUp,pDown,intrest,strike):
    
     return getValue(p,outcomes[0][0],outcomes[0][1],values[0][0],values[0][1],intrest)
 
+#returns the value of sub branch
 def getValue(p,pUp,pDown,vUp,vDown,i):
     value = 0
 
@@ -44,6 +45,7 @@ def getValue(p,pUp,pDown,vUp,vDown,i):
 
     return value
 
+#sets value of the last vector for Call
 def setSubOptionValue(out,strike):
     
     list = []
@@ -59,6 +61,7 @@ def setSubOptionValue(out,strike):
 
     return out
 
+#returns all possible states
 def getOutcomes(time,stepUp,stepDown,price):
     outcomes = []
 
@@ -78,6 +81,7 @@ def getOutcomes(time,stepUp,stepDown,price):
     
     return outcomes
 
+#returns next two possible states
 def getSubOutcomes(stepUp,stepDown,price):
     
     list = []
@@ -95,6 +99,7 @@ def getSubOutcomes(stepUp,stepDown,price):
 
     return list
 
+#sets the value vector for puts
 def setSubPutValue(out,strike):
     
     list = []
@@ -110,6 +115,7 @@ def setSubPutValue(out,strike):
 
     return out
 
+#returns value of a put option with replicating portfolio
 def getValuePut(p,pUp,pDown,vUp,vDown,i):
     value = 0
 
@@ -123,6 +129,7 @@ def getValuePut(p,pUp,pDown,vUp,vDown,i):
 
     return value
 
+#returns value of a Put with replacating the path
 def getPutValue(p,t,pUp,pDown,i,strike):
     outcomes = getOutcomes(t,pUp,pDown,p)
     values = setSubPutValue(outcomes,strike)
@@ -142,6 +149,7 @@ def getPutValue(p,t,pUp,pDown,i,strike):
             i-=1
     return getValuePut(p,outcomes[0][0],outcomes[0][1],values[0][0],values[0][1],intrest)
 
+#returns the value of a Call risk neutral with replacating the paths
 def getCallRisk(p,t,pUp,pDown,intrest,strike):
 
     values = getOutcomes(t,pUp,pDown,p)
@@ -162,6 +170,7 @@ def getCallRisk(p,t,pUp,pDown,intrest,strike):
             i-=1
     return getValueRisk(pUp,pDown,values[0][0],values[0][1],intrest)
 
+#returns value of an option with risk neutral probabilities
 def getValueRisk(pUp,pDown,vUp,vDown,i):
 
     u = pUp
@@ -175,6 +184,7 @@ def getValueRisk(pUp,pDown,vUp,vDown,i):
 
     return v
 
+#returns the value of a Put option with risk neutral probabilities, by building the path
 def getPutRisk(p,t,pUp,pDown,intrest,strike):
 
     values = getOutcomes(t,pUp,pDown,p)
@@ -195,6 +205,7 @@ def getPutRisk(p,t,pUp,pDown,intrest,strike):
             i-=1
     return getValueRisk(pUp,pDown,values[0][0],values[0][1],intrest)
 
+#returns the value of a Call option by building the vector and using risk neutral probabilities
 def getCallRiskDirect(p,t,pUp,pDown,intrest,strike):
 
     if((pDown/p>0 and pDown/p<1+intrest) and 1+intrest<pUp/p):
@@ -234,6 +245,7 @@ def getCallRiskDirect(p,t,pUp,pDown,intrest,strike):
 
     return e
 
+#returns the binary value of a number. Used for risk neutral direct
 def binary_list(n):
     l = []
     for i in range(pow(2,n)):
@@ -242,6 +254,7 @@ def binary_list(n):
         l.append(b)
     return l
 
+#returns the value of a Call option by using the risk neutral probabilities and Pascal triangle to speed up the process.
 def getCallRiskPascal(price,t,u,d,intrest,strike):
 
     p = (1+intrest-d)/(u-d)
@@ -270,6 +283,7 @@ def getCallRiskPascal(price,t,u,d,intrest,strike):
 
     return value
 
+#returns the N row of a Pascal triangle
 def getRow(N):
 
     l = []
@@ -283,6 +297,7 @@ def getRow(N):
 
     return l
 
+#returns the value of an American Put option, by using replacating porfolio and path
 def getAmericanPut(price,t,u,d,intrest,strike):
     
     outcomes = getOutcomes(t,u,d,price)
@@ -304,6 +319,7 @@ def getAmericanPut(price,t,u,d,intrest,strike):
     
     return getValuePutAmerican(price,outcomes[0][0],outcomes[0][1],values[0][0],values[0][1],intrest,strike)
 
+#returns the value of a simple American Put option (1 period)
 def getValuePutAmerican(p,pUp,pDown,vUp,vDown,i,strike):
     value = 0
 
@@ -318,14 +334,21 @@ def getValuePutAmerican(p,pUp,pDown,vUp,vDown,i,strike):
         return 0
 
     return value
+
+#Call option value replicating portfolio
 #print("Option value is: ",str(getOptionValue(priceSec,time,priceUp,priceDown,intrest,strike)))
 
+#Risk neutral Call with path building
 #print("Option value is: ",str(getCallRisk(priceSec,time,priceUp,priceDown,intrest,strike)))
 
+#Risk neutral Put with path building
 #print("Option value is: ",str(getPutRisk(priceSec,time,priceUp,priceDown,intrest,strike)))
 
+#Risk neutral Call without path with a vector
 #print("Option value is: ",str(getCallRiskDirect(priceSec,time,priceUp,priceDown,intrest,strike)))
 
+#Risk neutral Call with Pascal triangle the fastest
 #print("Option value is: ",str(getCallRiskPascal(priceSec,time,priceUp,priceDown,intrest,strike)))
 
+#American Put with risk neutral and path building
 print("Option value is: ",str(getAmericanPut(priceSec,time,priceUp,priceDown,intrest,strike)))
