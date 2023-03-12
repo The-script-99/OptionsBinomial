@@ -1,12 +1,12 @@
 from decimal import Decimal 
 
 #Enter data
-priceSec = 4
-priceUp = 2
-priceDown = 1/2
-time = 2
-intrest = 0.25
-strike = 5
+priceSec = 23.47
+priceUp = 1.02
+priceDown = 0.97
+time = 39
+intrest = (pow(1+0.0457,1/365)-1)
+strike = 12.5
 
 #return value of an option with replicating portfolio 
 def getOptionValue(p,t,pUp,pDown,intrest,strike):
