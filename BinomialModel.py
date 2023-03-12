@@ -1,7 +1,7 @@
 from decimal import Decimal 
 
 #Enter data
-priceSec = 50
+priceSec = 4
 priceUp = 2
 priceDown = 1/2
 time = 2
@@ -335,6 +335,35 @@ def getValuePutAmerican(p,pUp,pDown,vUp,vDown,i,strike):
 
     return value
 
+#returns the value of a european Put option with risk neutral probabilities by using Pascal triangle
+def getValuePutPascal(price,t,u,d,intrest,strike):
+
+    p = (1+intrest-d)/(u-d)
+    q = 1-p
+    i,j = t,0
+    row = getRow(t)
+    value = 0
+
+    if(not(0<d<1+intrest<u)):
+        return "N/A. 0<d<1+r<u"
+
+    for x in row:
+        x = Decimal(x)
+        v = price*pow(u,i)*pow(d,j)
+        v = strike-v
+        
+        if(v>0):
+            v = v*pow(p,i)*pow(q,j)
+            v = Decimal(v)
+            o = Decimal(v*x)
+            de = Decimal(pow(1+intrest,t))
+            o = o/de
+            value = value + o
+        j+=1
+        i-=1
+
+    return value
+
 #Call option value replicating portfolio
 #print("Option value is: ",str(getOptionValue(priceSec,time,priceUp,priceDown,intrest,strike)))
 
@@ -350,5 +379,10 @@ def getValuePutAmerican(p,pUp,pDown,vUp,vDown,i,strike):
 #Risk neutral Call with Pascal triangle the fastest
 #print("Option value is: ",str(getCallRiskPascal(priceSec,time,priceUp,priceDown,intrest,strike)))
 
+#Risk neutral Put with Pascal triangle the fastest
+print("Option value is: ",str(getValuePutPascal(priceSec,time,priceUp,priceDown,intrest,strike)))
+
 #American Put with risk neutral and path building
-print("Option value is: ",str(getAmericanPut(priceSec,time,priceUp,priceDown,intrest,strike)))
+#print("Option value is: ",str(getAmericanPut(priceSec,time,priceUp,priceDown,intrest,strike)))
+
+
