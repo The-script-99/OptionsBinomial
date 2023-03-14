@@ -359,6 +359,7 @@ def getValuePutPascal(price,t,u,d,intrest,strike):
             de = Decimal(pow(1+intrest,t))
             o = o/de
             value = value + o
+            continue
         j+=1
         i-=1
 
